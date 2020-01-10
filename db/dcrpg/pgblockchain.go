@@ -3865,9 +3865,6 @@ func (pgb *ChainDB) storeTxns(txns []*dbtypes.Tx, vouts [][]*dbtypes.Vout, vins 
 
 		// Return the transactions vout slice.
 		Tx.Vouts = vouts[it]
-
-		// cache new tx vouts
-		cacheMixedVouts(Tx.VoutDbIds, vouts[it], Tx.BlockHeight)
 	}
 
 	// Get the tx PK IDs for storage in the blocks, tickets, and votes table.
@@ -4228,8 +4225,6 @@ txns:
 					err, dbTx.Rollback())
 				return txRes
 			}
-
-			setSpendingForVoutsCaches(voutDbIDs, tx.BlockHeight)
 		}
 	}
 
