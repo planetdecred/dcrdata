@@ -1803,6 +1803,8 @@ func (exp *explorerUI) AgendaPage(w http.ResponseWriter, r *http.Request) {
 	} else {
 		blocksLeft = 0
 	}
+	var approvalRating float64
+	approvalRating = 100 * float64(summary.Yes) / float64(summary.Yes + summary.No)
 
 	str, err := exp.templates.exec("agenda", struct {
 		*CommonPageData
@@ -1814,6 +1816,7 @@ func (exp *explorerUI) AgendaPage(w http.ResponseWriter, r *http.Request) {
 		BlocksLeft    int64
 		TimeRemaining string
 		TotalVotes    uint32
+		ApprovalRating float64
 	}{
 		CommonPageData: exp.commonData(r),
 		Ai:             agendaInfo,
@@ -1824,6 +1827,7 @@ func (exp *explorerUI) AgendaPage(w http.ResponseWriter, r *http.Request) {
 		BlocksLeft:     blocksLeft,
 		TimeRemaining:  timeLeft,
 		TotalVotes:     totalVotes,
+		ApprovalRating: approvalRating,
 	})
 
 	if err != nil {
