@@ -91,6 +91,12 @@
                             </td>
                         </tr>
                         <tr>
+                            <td class="text-right pr-2 lh1rem vam nowrap xs-w117 medium-sans">Approval Rating</td>
+                            <td>
+                                <span class="hash break-word">{{printf "%.2f%%" $.ApprovalRating}}%</span>
+                            </td>
+                        </tr>
+                        <tr>
                             {{if gt .QuorumProgress 0.0}}
                                 <td class="text-right pr-2 lh1rem vam nowrap xs-w117 medium-sans">Quorum</td>
                                 <td class="lh1rem">
