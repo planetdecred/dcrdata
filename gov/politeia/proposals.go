@@ -315,7 +315,25 @@ func (db *ProposalDB) ProposalByToken(proposalToken string) (*pitypes.ProposalIn
 	db.mtx.RLock()
 	defer db.mtx.RUnlock()
 
-	return db.proposal("TokenVal", proposalToken)
+	pInfo, err := db.proposal("TokenVal", proposalToken)
+	if err == storm.ErrNotFound {
+		// it is possible that the proposal was/have not been updated from the politeia endpoint
+		if updateErr := db.updateProposalFromAPI(proposalToken); updateErr == nil {
+			return db.proposal("TokenVal", proposalToken)
+		}
+	}
+	return pInfo, err
+}
+
+// updateProposalFromAPI fetch and updated the proposal specified by the token from
+// the politeia endpoint
+func (db *ProposalDB) updateProposalFromAPI(proposalToken string) error {
+	proposal, err := piclient.RetrieveProposalByToken(db.client, db.APIURLpath, proposalToken)
+	if err != nil {
+		return err
+	}
+	_, err = db.saveProposals(pitypes.Proposals{Data: []*pitypes.ProposalInfo{proposal.Data}})
+	return err
 }
 
 // ProposalByRefID returns the single proposal identified by the provided refID.
